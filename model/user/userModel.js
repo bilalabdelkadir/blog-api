@@ -141,6 +141,39 @@ userSchema.statics.forgotPassword = async function (email) {
   return code;
 };
 
+// reset password
+userSchema.statics.resetPassword = async function (email, code, newPassword) {
+  const user = await this.findOne({ email });
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  if (user.resetPasswordCode !== code) {
+    throw new Error("Invalid code");
+  }
+
+  if (user.resetPasswordCodeExpiration < Date.now()) {
+    throw new Error("Code expired");
+  }
+
+  if (!validator.isStrongPassword(newPassword)) {
+    throw new Error(
+      "Password should be at least 8 characters long and should contain at least one uppercase letter, one lowercase letter, one number and one special character"
+    );
+  }
+
+  //   then we will set up salt with 10 digit so that it will be balanced for security and speed and also we will use asyn await because it takes time
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(newPassword, salt);
+
+  user.password = hash;
+  user.resetPasswordCode = undefined;
+  user.resetPasswordCodeExpiration = undefined;
+
+  await user.save();
+  return user;
+};
+
 const User = mongoose.model("User", userSchema);
 
 export default User;
