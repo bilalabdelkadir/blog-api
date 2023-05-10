@@ -104,6 +104,28 @@ userSchema.statics.register = async function (
   return user;
 };
 
+// signi in user
+userSchema.statics.login = async function (email, password) {
+  if (!email || !password) {
+    throw Error("All fields must be filled");
+  }
+
+  const user = await this.findOne({ email }).select("+password");
+  if (!user) {
+    throw Error(
+      "There is no account with this email or phone number. Please register now"
+    );
+  }
+
+  const match = await bcrypt.compare(password, user.password);
+
+  if (!match) {
+    throw Error("Incorrect Password");
+  }
+
+  return user;
+};
+
 const User = mongoose.model("User", userSchema);
 
 export default User;
