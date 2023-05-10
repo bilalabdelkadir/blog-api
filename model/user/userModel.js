@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import validator from "validator";
+import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
   {
@@ -18,7 +19,6 @@ const userSchema = new mongoose.Schema(
       required: [true, "Please enter email"],
       unique: true,
       lowercase: true,
-      validate: [validator.isEmail, "Please enter valid email"],
       min: 2,
       max: 50,
     },
@@ -37,12 +37,6 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
-
-    phoneNumber: {
-      type: String,
-      max: 15,
-      min: 8,
-    },
     isEmailVerified: {
       type: Boolean,
       default: false,
@@ -58,6 +52,57 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// register user
+userSchema.statics.register = async function (
+  firstName,
+  lastName,
+  email,
+  password
+) {
+  // check if email password
+  if (!firstName || !lastName || !email || !password) {
+    throw new Error("Please provide required info");
+  }
+
+  // check if user already exists with email
+  const exist = await this.findOne({ email });
+  if (exist) {
+    if (exist.email === email) {
+      throw new Error("An account with this email already exists");
+    } else {
+      throw new Error("An account with this phone number already exists");
+    }
+  }
+
+  // check if email is valid using validator
+  if (!validator.isEmail(email)) {
+    throw new Error("Please provide a valid email");
+  }
+
+  // check if password is strong password
+  if (!validator.isStrongPassword(password)) {
+    throw new Error(
+      "Password should be at least 8 characters long and should contain at least one uppercase letter, one lowercase letter, one number and one special character"
+    );
+  }
+
+  // create salt for password
+  const salt = await bcrypt.genSalt(10);
+  // hash password
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  // create new user
+  const user = await this.create({
+    firstName,
+    lastName,
+    email,
+    password: hashedPassword,
+  });
+
+  // return user
+  return user;
+};
 
 const User = mongoose.model("User", userSchema);
 
