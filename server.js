@@ -27,8 +27,11 @@ app.use(morgan("tiny"));
 app.use("/api/v1", authRouter);
 app.use("/api/v1/article", articleRouter);
 
-const server = app.listen(process.env.PORT, () =>
+const PORT = parseInt(process.env.PORT) || 8000
+const NODE_ENV = process.env.NODE_ENV || "Development Mode"
+
+app.listen(PORT, () =>
   console.log(
-    `server started at port ${process.env.PORT} in ${process.env.NODE_ENV}`
+    `server started at port ${process.env.PORT} in ${NODE_ENV}`
   )
 );
