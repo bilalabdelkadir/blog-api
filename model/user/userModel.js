@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 
 const userSchema = new mongoose.Schema(
   {
@@ -124,6 +125,20 @@ userSchema.statics.login = async function (email, password) {
   }
 
   return user;
+};
+
+// forget password
+userSchema.statics.forgotPassword = async function (email) {
+  const user = await this.findOne({ email });
+  if (!user) {
+    throw new Error("User not found");
+  }
+  const code = crypto.randomInt(100000, 999999).toString();
+  user.resetPasswordCode = code;
+  user.resetPasswordCodeExpiration = Date.now() + 15 * 60 * 1000; // 15 minutes
+  await user.save();
+
+  return code;
 };
 
 const User = mongoose.model("User", userSchema);
