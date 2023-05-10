@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import connectDatabase from "./config/databaseConfig.js";
 import authRouter from "./routes/auth/authRoute.js";
+import articleRouter from "./routes/article/articleRoute.js";
 
 // database connection
 dotenv.config({ path: "./config/config.env" });
@@ -17,6 +18,7 @@ app.use(morgan("tiny"));
 
 // set up route
 app.use("/api/v1", authRouter);
+app.use("/api/v1/article", articleRouter);
 
 const server = app.listen(process.env.PORT, () =>
   console.log(
