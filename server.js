@@ -5,6 +5,8 @@ import morgan from "morgan";
 import connectDatabase from "./config/databaseConfig.js";
 import authRouter from "./routes/auth/authRoute.js";
 import articleRouter from "./routes/article/articleRoute.js";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
 
 // database connection
 dotenv.config({ path: "./config/config.env" });
@@ -27,8 +29,39 @@ app.use(morgan("tiny"));
 app.use("/api/v1", authRouter);
 app.use("/api/v1/article", articleRouter);
 
-const server = app.listen(process.env.PORT, () =>
-  console.log(
-    `server started at port ${process.env.PORT} in ${process.env.NODE_ENV}`
-  )
+const PORT = parseInt(process.env.PORT) || 8000;
+const NODE_ENV = process.env.NODE_ENV || "Development Mode";
+
+// Swagger configuration
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "blog app api",
+      version: "1.0.0",
+      description: "My Blog app api",
+      contact: {
+        name: "Bilal Abdelkadir",
+        email: "bilalbinabdelkadir@gmail.com",
+      },
+    },
+    servers: [
+      {
+        url: `http://localhost:${process.env.PORT}`,
+      },
+    ],
+  },
+  // apis: ["./routes/*.js"],
+  apis: ["./routes/auth/authRoute.js", "./routes/article/articleRoute.js"],
+};
+
+const specs = swaggerJSDoc(options);
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs, { explorer: true })
+);
+
+const server = app.listen(PORT, () =>
+  console.log(`server started at port ${process.env.PORT} in ${NODE_ENV}`)
 );
