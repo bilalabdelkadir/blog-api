@@ -5,10 +5,18 @@ import morgan from "morgan";
 import connectDatabase from "./config/databaseConfig.js";
 import authRouter from "./routes/auth/authRoute.js";
 import articleRouter from "./routes/article/articleRoute.js";
+import expressRedisCache from "express-redis-cache";
 
 // database connection
 dotenv.config({ path: "./config/config.env" });
 connectDatabase();
+
+// config redis
+const cache = expressRedisCache({
+  expire: 10, // optional: expire every 10 seconds
+  host: process.env.REDIS_URL,
+  port: 6379,
+});
 
 // setting up the middleware
 const app = express();
