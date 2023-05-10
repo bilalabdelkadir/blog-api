@@ -1,0 +1,33 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    environment:
+      - MONGO_URI=mongodb://db:27017/blogapi
+      - REDIS_URL=redis://redis:6379
+    networks:
+      - backend
+
+  db:
+    image: mongo:latest
+    volumes:
+      - data:/data/db
+    networks:
+      - backend
+
+  redis:
+    image: redis:latest
+    networks:
+      - backend
+
+volumes:
+  data:
+
+networks:
+  backend:
