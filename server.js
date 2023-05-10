@@ -5,8 +5,8 @@ import morgan from "morgan";
 import connectDatabase from "./config/databaseConfig.js";
 
 // database connection
-connectDatabase();
 dotenv.config({ path: "./config/config.env" });
+connectDatabase();
 
 // setting up the middleware
 const app = express();
