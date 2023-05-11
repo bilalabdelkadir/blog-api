@@ -27,7 +27,7 @@ app.use(morgan("tiny"));
 
 // set up route
 app.use("/api/v1", authRouter);
-app.use("/api/v1/article", articleRouter);
+app.use("/api/v1", articleRouter);
 
 const PORT = parseInt(process.env.PORT) || 8000;
 const NODE_ENV = process.env.NODE_ENV || "Development Mode";
@@ -51,8 +51,7 @@ const options = {
       },
     ],
   },
-  // apis: ["./routes/*.js"],
-  apis: ["./routes/auth/authRoute.js", "./routes/article/articleRoute.js"],
+  apis: ["./routes/*.js"],
 };
 
 const specs = swaggerJSDoc(options);

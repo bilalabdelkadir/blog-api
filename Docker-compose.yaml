@@ -13,6 +13,15 @@ services:
     environment:
       - MONGO_URI=mongodb://db:27017/blogapi
       - REDIS_URL=redis://redis:6379
+      - PORT = 8000
+      - NODE_ENV = development
+      - DB_URL = mongodb://db:27017/blogapi
+      - JWT_SECRET = 2NDO480W83U2NDJSK32NDSD332sdfds
+      - EMAIL_USERNAME = bilalbinabdelkadir@gmail.com
+      - EMAIL_PASSWORD = buzccysughqikver
+      - BASE_URL = http://127.0.0.1:8000
+      - REDIS_URL=redis://redis:6379
+
     networks:
       - backend
     volumes:
@@ -25,7 +34,7 @@ services:
     networks:
       - backend
     ports:
-      - "27017:27017"
+      - "27018:27017"
 
   redis:
     image: redis:latest

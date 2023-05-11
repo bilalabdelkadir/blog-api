@@ -49,18 +49,140 @@ import getArticles from "../../controller/article/getArticlesController.js";
 
 /**
  * @swagger
- * /:
- * get:
- *    summery: Return all the list of the books
- *
+ * tags:
+ *  name: Articles
+ *  description: The articles managing API
  */
+
+/**
+ * @swagger
+ * /article:
+ *  get:
+ *   summary: Returns the list of all the articles
+ *  tags: [Articles]
+ * responses:
+ *  200:
+ *  description: The list of the articles
+ * content:
+ * application/json:
+ * schema:
+ * type: array
+ * items:
+ * 500:
+ * description: Some server error
+ * 404:
+ * description: The articles were not found
+ */
+
+/**
+ * @swagger
+ * /api/v1/article/{id}:
+ * get:
+ * summary: Get the article by id
+ * tags: [Articles]
+ * parameters:
+ * - in: path
+ * name: id
+ * schema:
+ * type: string
+ * required: true
+ * description: The article id
+ * responses:
+ * 200:
+ * description: The article description by id
+ * content:
+ * application/json:
+ * schema:
+ * $ref: '#/components/schemas/Article'
+ * 404:
+ * description: The article was not found
+ * 500:
+ * description: Some error happened
+ * */
+
+/**
+ * @swagger
+ * /:
+ * post:
+ * summary: Create a new article
+ * tags: [Articles]
+ * requestBody:
+ * required: true
+ * content:
+ * application/json:
+ * schema:
+ * $ref: '#/components/schemas/Article'
+ * responses:
+ * 200:
+ * description: The article was successfully created
+ * content:
+ * application/json:
+ * schema:
+ * $ref: '#/components/schemas/Article'
+ * 500:
+ * description: Some error happened
+ * */
+
+/**
+ * @swagger
+ * /articles/{id}:
+ * patch:
+ * summary: Update the article by the id
+ * tags: [Articles]
+ * parameters:
+ * - in: path
+ * name: id
+ * schema:
+ * type: string
+ * required: true
+ * description: The article id
+ * requestBody:
+ * required: true
+ * content:
+ * application/json:
+ * schema:
+ * $ref: '#/components/schemas/Article'
+ * responses:
+ * 200:
+ * description: The article was updated
+ * content:
+ * application/json:
+ * schema:
+ * $ref: '#/components/schemas/Article'
+ * 404:
+ * description: The article was not found
+ * 500:
+ * description: Some error happened
+ * */
+
+/**
+ * @swagger
+ * /articles/{id}:
+ * delete:
+ * summary: Remove the article by id
+ * tags: [Articles]
+ * parameters:
+ * - in: path
+ * name: id
+ * schema:
+ * type: string
+ * required: true
+ * description: The article id
+ * responses:
+ * 200:
+ * description: The article was deleted
+ * 404:
+ * description: The article was not found
+ * 500:
+ * description: Some error happened
+ * */
 
 const router = express.Router();
 
-router.get("/", getArticles);
-router.get("/:id", getArticleById);
-router.post("/", requireAuth, createArticle);
-router.patch("/:id", requireAuth, updateArticle);
-router.delete("/:id", requireAuth, deleteArticle);
+router.get("/article/", getArticles);
+router.get("/article/:id", getArticleById);
+router.post("/article/", requireAuth, createArticle);
+router.patch("/article/:id", requireAuth, updateArticle);
+router.delete("/article/:id", requireAuth, deleteArticle);
 
 export default router;
